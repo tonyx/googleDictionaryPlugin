@@ -1,1 +1,2 @@
-implementation of generic dictionary plugin
+implementation of generic dictionary plugin for command line translator (https://github.com/tonyx/Translate)
+using google translator api

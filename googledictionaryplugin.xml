@@ -231,7 +231,7 @@
       <tstamp>
          <format property="touch.time" pattern="yyyyMMDDhhmm"/>
       </tstamp>
-      <jar basedir="${module.googledictionaryplugin.basedir}/out/production/GoogleDictionaryPlugin"  destfile="cldictionaryplugin${DSTAMP}${TSTAMP}.jar" >
+      <jar basedir="${module.googledictionaryplugin.basedir}/out/production/GoogleDictionaryPlugin"  destfile="cldicpluginSNAPSHOT.jar" >
       </jar>
   </target>
   <target name="compile.module.googledictionaryplugin.tests" depends="compile.module.googledictionaryplugin.production" description="compile module googleDictionaryPlugin; test classes" unless="skip.tests"/>
