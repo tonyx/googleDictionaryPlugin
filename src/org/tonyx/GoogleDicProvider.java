@@ -4,7 +4,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.tonyxzt.language.ContentProvider;
+import org.tonyxzt.language.core.ContentProvider;
+
 
 /**
  * Created by IntelliJ IDEA.

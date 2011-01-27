@@ -6,6 +6,10 @@ import org.junit.Test;
 import org.tonyx.GoogleDicContentFilter;
 import org.tonyx.GoogleDicProvider;
 import org.tonyxzt.language.*;
+import org.tonyxzt.language.core.GenericDictionary;
+import org.tonyxzt.language.core.Translator;
+import org.tonyxzt.language.io.InMemoryOutStream;
+import org.tonyxzt.language.io.InputStream;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,12 +38,10 @@ public class GDicPluginTest {
     }
 
     @Test
-    public void canReadFromInputFileMultipleLines() throws Exception {
+    public void canTranslateHello() throws Exception {
         translator.wrapCommandLineParameters(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "ciao"});
         translator.setOutStream(ios);
-
         translator.doAction(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "--inFile=infile"});
-
         Assert.assertTrue(ios.getContent().contains("bye"));
     }
 
