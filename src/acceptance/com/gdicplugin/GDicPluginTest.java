@@ -39,19 +39,19 @@ public class GDicPluginTest {
 
     @Test
     public void canTranslateHello() throws Exception {
-        translator.wrapCommandLineParameters(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "ciao"});
+        translator.setCommand(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "ciao"});
         translator.setOutStream(ios);
-        translator.doAction(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "--inFile=infile"});
+        translator.doAction();
         Assert.assertTrue(ios.getContent().contains("bye"));
     }
 
     @Test
     public void canReadFromInputFile() throws Exception {
-        translator.wrapCommandLineParameters(new String[] {"--dic=gDic","--oriLang=en","--targetLang=it","--inFile=infile"});
+        translator.setCommand(new String[] {"--dic=gDic","--oriLang=en","--targetLang=it","--inFile=infile"});
         InputStream inputStream = new InputStream(){ boolean start = true; public String next() {if (start) { start=false; return "hi";} else return null;}};
         translator.setInputStream(inputStream);
         translator.setOutStream(ios);
-        translator.doAction(new String[] {"--dic=gDic","--oriLang=en","--targetLang=it","--inFile=infile"});
+        translator.doAction();
 
         Assert.assertTrue(ios.getContent().contains("ciao"));
         Assert.assertTrue(ios.getContent().contains("salve"));
@@ -59,9 +59,9 @@ public class GDicPluginTest {
 
     @Test
     public void testCyrillic() throws Exception {
-        translator.wrapCommandLineParameters(new String[]{"--dic=gDic","--oriLang=en","--targetLang=ru","hi"});
+        translator.setCommand(new String[]{"--dic=gDic","--oriLang=en","--targetLang=ru","hi"});
         translator.setOutStream(ios);
-        translator.doAction((new String[]{"--dic=gDic","--oriLang=en","--targetLang=ru","hi"}));
+        translator.doAction();
 
         Assert.assertTrue(ios.getContent().contains("Гавайи"));
 
