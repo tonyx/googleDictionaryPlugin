@@ -31,4 +31,8 @@ public class GoogleDicProvider implements ContentProvider {
     public String supportedLanguges() {
         return "";
     }
+
+    public String getInfoUrl() {
+        return "http://www.google.com/dictionary";
+    }
 }

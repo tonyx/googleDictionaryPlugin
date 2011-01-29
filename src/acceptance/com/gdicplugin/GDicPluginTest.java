@@ -10,6 +10,7 @@ import org.tonyxzt.language.core.GenericDictionary;
 import org.tonyxzt.language.core.Translator;
 import org.tonyxzt.language.io.InMemoryOutStream;
 import org.tonyxzt.language.io.InputStream;
+import org.tonyxzt.language.util.FakeBrowserActivator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,19 @@ public class GDicPluginTest {
         translator.setOutStream(ios);
         translator.doAction();
         Assert.assertTrue(ios.getContent().contains("bye"));
+    }
+
+
+    @Test
+    public void canGetTheUrlService() {
+        InMemoryOutStream outStream  = new InMemoryOutStream();
+        FakeBrowserActivator browserActivator = new FakeBrowserActivator();
+        translator.setOutStream(outStream);
+        translator.setBrowserActivator(browserActivator);
+
+        translator.setCommand(new String[] {"--dic=gDic", "--info"});
+        translator.doAction();
+        Assert.assertEquals("http://www.google.com/dictionary", browserActivator.getOutUrl());
     }
 
     @Test
