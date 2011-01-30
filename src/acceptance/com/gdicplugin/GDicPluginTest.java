@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tonyx.GoogleDicContentFilter;
 import org.tonyx.GoogleDicProvider;
-import org.tonyxzt.language.*;
 import org.tonyxzt.language.core.GenericDictionary;
 import org.tonyxzt.language.core.Translator;
 import org.tonyxzt.language.io.InMemoryOutStream;
@@ -26,16 +25,19 @@ public class GDicPluginTest {
     Map<String,GenericDictionary> mapDictionaries;
     private Translator translator;
     InMemoryOutStream ios;
+    FakeBrowserActivator browserActivator;
 
     @Before
     public void SetUp() {
+        browserActivator = new FakeBrowserActivator();
         mapDictionaries = new HashMap<String,GenericDictionary>(){
                {
                     put("gDic",new GenericDictionary("gDic",new GoogleDicProvider(),new GoogleDicContentFilter()));
                }
         };
         ios = new InMemoryOutStream();
-        translator = new Translator(mapDictionaries);
+        //translator = new Translator(mapDictionaries);
+        translator = new Translator(mapDictionaries,browserActivator,ios);
     }
 
     @Test
@@ -49,11 +51,6 @@ public class GDicPluginTest {
 
     @Test
     public void canGetTheUrlService() {
-        InMemoryOutStream outStream  = new InMemoryOutStream();
-        FakeBrowserActivator browserActivator = new FakeBrowserActivator();
-        translator.setOutStream(outStream);
-        translator.setBrowserActivator(browserActivator);
-
         translator.setCommand(new String[] {"--dic=gDic", "--info"});
         translator.doAction();
         Assert.assertEquals("http://www.google.com/dictionary", browserActivator.getOutUrl());
