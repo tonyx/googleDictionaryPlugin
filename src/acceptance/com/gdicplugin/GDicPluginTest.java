@@ -30,21 +30,20 @@ public class GDicPluginTest {
     @Before
     public void SetUp() {
         browserActivator = new FakeBrowserActivator();
+        ios = new InMemoryOutStream();
         mapDictionaries = new HashMap<String,GenericDictionary>(){
                {
                     put("gDic",new GenericDictionary("gDic",new GoogleDicProvider(),new GoogleDicContentFilter()));
                }
         };
-        ios = new InMemoryOutStream();
-        //translator = new Translator(mapDictionaries);
         translator = new Translator(mapDictionaries,browserActivator,ios);
     }
 
     @Test
     public void canTranslateHello() throws Exception {
         translator.setCommand(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "ciao"});
-        translator.setOutStream(ios);
         translator.doAction();
+
         Assert.assertTrue(ios.getContent().contains("bye"));
     }
 
@@ -61,7 +60,6 @@ public class GDicPluginTest {
         translator.setCommand(new String[] {"--dic=gDic","--oriLang=en","--targetLang=it","--inFile=infile"});
         InputStream inputStream = new InputStream(){ boolean start = true; public String next() {if (start) { start=false; return "hi";} else return null;}};
         translator.setInputStream(inputStream);
-        translator.setOutStream(ios);
         translator.doAction();
 
         Assert.assertTrue(ios.getContent().contains("ciao"));
@@ -71,7 +69,6 @@ public class GDicPluginTest {
     @Test
     public void testCyrillic() throws Exception {
         translator.setCommand(new String[]{"--dic=gDic","--oriLang=en","--targetLang=ru","hi"});
-        translator.setOutStream(ios);
         translator.doAction();
 
         Assert.assertTrue(ios.getContent().contains("Гавайи"));

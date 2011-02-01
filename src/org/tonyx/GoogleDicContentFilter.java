@@ -27,12 +27,22 @@ public class GoogleDicContentFilter implements ContentFilter {
         String toAdd;
         for (int i=INDEX_START_FILTERING ;i<splitted.length;i++)  {
             toAdd= splitted[i].substring(0,splitted[i].indexOf("</span>"));
-            toAdd = Utils.stripBlock(toAdd, "a");
+            toAdd = removeAnchorsBlocksByTags(toAdd,"a");
+            //toAdd = Utils.stripBlock(toAdd,"a");
             if (!"\n".equals(toAdd.replaceAll(" ",""))) {
                 toReturn+=toAdd;
                 toReturn+=", ";
             }
         }
         return toReturn.replaceAll("<[^>]*>","");
+    }
+
+    private String removeAnchorsBlocksByTags(String string, String tag) {
+        String[] res = string.split("<"+tag+"a.[^>]*>|</"+tag+">");
+        String strRes="";
+        for (int i =0;i<res.length;i+=2) {
+            strRes+=res[i];
+        }
+        return strRes;
     }
 }
