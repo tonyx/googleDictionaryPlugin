@@ -3,16 +3,20 @@ package acceptance.com.gdicplugin;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.tonyx.GoogleDicContentFilter;
 import org.tonyx.GoogleDicProvider;
 import org.tonyxzt.language.core.GenericDictionary;
 import org.tonyxzt.language.core.Translator;
-import org.tonyxzt.language.io.InMemoryOutStream;
 import org.tonyxzt.language.io.InputStream;
+import org.tonyxzt.language.io.OutStream;
+import org.tonyxzt.language.util.BrowserActivator;
 import org.tonyxzt.language.util.FakeBrowserActivator;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,13 +28,14 @@ import java.util.Map;
 public class GDicPluginTest {
     Map<String,GenericDictionary> mapDictionaries;
     private Translator translator;
-    InMemoryOutStream ios;
-    FakeBrowserActivator browserActivator;
+    OutStream ios;
+    BrowserActivator browserActivator;
 
     @Before
     public void SetUp() {
-        browserActivator = new FakeBrowserActivator();
-        ios = new InMemoryOutStream();
+        browserActivator = mock(FakeBrowserActivator.class);
+        ios = mock(OutStream.class);
+
         mapDictionaries = new HashMap<String,GenericDictionary>(){
                {
                     put("gDic",new GenericDictionary("gDic",new GoogleDicProvider(),new GoogleDicContentFilter()));
@@ -41,10 +46,17 @@ public class GDicPluginTest {
 
     @Test
     public void canTranslateHello() throws Exception {
+        ArgumentMatcher<String> containsBye = new ArgumentMatcher<String>() {
+            @Override
+            public boolean matches(Object object) {
+                return ((String)object).contains("bye");
+            }
+        };
+
         translator.setCommand(new String[]{"--dic=gDic", "--oriLang=it", "--targetLang=en", "ciao"});
         translator.doAction();
 
-        Assert.assertTrue(ios.getContent().contains("bye"));
+        verify(ios).output(argThat(containsBye));
     }
 
 
@@ -52,27 +64,40 @@ public class GDicPluginTest {
     public void canGetTheUrlService() {
         translator.setCommand(new String[] {"--dic=gDic", "--info"});
         translator.doAction();
-        Assert.assertEquals("http://www.google.com/dictionary", browserActivator.getOutUrl());
+
+        verify(browserActivator).activateBrowser("http://www.google.com/dictionary");
     }
 
     @Test
     public void canReadFromInputFile() throws Exception {
+        ArgumentMatcher<String> containsBye = new ArgumentMatcher<String>() {
+            @Override
+            public boolean matches(Object object) {
+                return ((String)object).contains("ciao")&&((String)object).contains("salve");
+            }
+        };
         translator.setCommand(new String[] {"--dic=gDic","--oriLang=en","--targetLang=it","--inFile=infile"});
-        InputStream inputStream = new InputStream(){ boolean start = true; public String next() {if (start) { start=false; return "hi";} else return null;}};
+
+        InputStream inputStream = mock(InputStream.class);
+        when(inputStream.next()).thenReturn("hi").thenReturn(null);
+
         translator.setInputStream(inputStream);
         translator.doAction();
-
-        Assert.assertTrue(ios.getContent().contains("ciao"));
-        Assert.assertTrue(ios.getContent().contains("salve"));
+        verify(ios).output(argThat(containsBye));
     }
 
     @Test
     public void testCyrillic() throws Exception {
+        ArgumentMatcher<String> containsDavai = new ArgumentMatcher<String>() {
+            @Override
+            public boolean matches(Object object) {
+                return ((String)object).contains("Гавайи");
+            }
+        };
         translator.setCommand(new String[]{"--dic=gDic","--oriLang=en","--targetLang=ru","hi"});
         translator.doAction();
 
-        Assert.assertTrue(ios.getContent().contains("Гавайи"));
-
+        verify(ios).output(argThat(containsDavai));
     }
 }
 
